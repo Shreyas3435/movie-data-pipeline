@@ -457,6 +457,97 @@ Before presenting, verify:
 📞 Support
 If you encounter issues:
 
+## 📊 Running Analytical Queries
+
+After the pipeline completes, you can run the analytical queries using two methods:
+
+### Method 1: Python Script (Recommended - Best Formatting)
+
+```bash
+python run_queries.py
+```
+
+**Features:**
+- ✅ Automatically runs all 4 required queries
+- ✅ Beautiful pandas DataFrame formatting
+- ✅ Includes bonus queries and data quality summary
+- ✅ Shows API enrichment success rates
+- ✅ Easy to read and present
+
+**Example Output:**
+```
+================================================================================
+QUERY 1: Which movie has the highest average rating?
+================================================================================
+            movie_title  year  avg_rating  num_ratings
+ Shawshank Redemption, The  1994        4.45          317
+
+================================================================================
+QUERY 2: What are the top 5 movie genres with highest average rating?
+================================================================================
+  genre_name  avg_rating  num_movies  total_ratings
+   Film-Noir        4.05           7            423
+ Documentary        3.95          12            567
+         War        3.89          15            892
+...
+```
+
+### Method 2: Direct SQLite (Traditional)
+
+```bash
+# Run all queries from SQL file
+sqlite3 movies.db < queries.sql
+
+# Or run interactively
+sqlite3 movies.db
+.mode column
+.headers on
+.read queries.sql
+.quit
+```
+
+### Method 3: Individual Queries
+
+```bash
+# Query 1: Highest rated movie
+sqlite3 movies.db "SELECT m.clean_title, m.year, ROUND(AVG(r.rating), 2) AS avg_rating FROM movies m JOIN ratings r ON m.movieId = r.movieId GROUP BY m.movieId HAVING COUNT(r.rating) >= 10 ORDER BY avg_rating DESC LIMIT 1;"
+
+# Query 2: Top genres
+sqlite3 movies.db "SELECT g.genre_name, ROUND(AVG(r.rating), 2) AS avg_rating FROM genres g JOIN movie_genres mg ON g.genre_id = mg.genre_id JOIN movies m ON mg.movie_id = m.movieId JOIN ratings r ON m.movieId = r.movieId GROUP BY g.genre_name HAVING COUNT(r.rating) >= 100 ORDER BY avg_rating DESC LIMIT 5;"
+```
+
+---
+
+## 🎯 Query Results
+
+The pipeline answers these analytical questions:
+
+1. **Which movie has the highest average rating?**
+   - Uses minimum 10 ratings for statistical significance
+   - Returns movie title, year, average rating, and rating count
+
+2. **What are the top 5 movie genres with highest average rating?**
+   - Uses normalized genre tables
+   - Requires minimum 100 ratings per genre
+   - Shows genre name, average rating, movie count, and total ratings
+
+3. **Who is the director with the most movies in this dataset?**
+   - Filters out 'N/A' entries (movies without API data)
+   - Returns director name, movie count, and list of titles
+
+4. **What is the average rating of movies released each year?**
+   - Groups ratings by release year
+   - Shows trends over time
+   - Includes movie count and total ratings per year
+
+### Bonus Queries Included
+
+The `run_queries.py` script also provides:
+- 🎬 Top 10 most popular movies (by rating count)
+- 📊 Genre distribution across decades
+- ⭐ Highest IMDB rated movies from API enrichment
+- 📈 Data quality and API enrichment success rates
+
 Check the etl_pipeline.log file for detailed error messages
 Verify all prerequisites are installed
 Confirm CSV files are in correct location
