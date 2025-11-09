@@ -1,0 +1,50 @@
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files
+*.log
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large data files (optional - uncomment if you don't want to upload CSVs)
+# movies.csv
+# ratings.csv
+
+# Query results
+query_results.txt
+```
+
+### **Step 3: Verify Your Project Structure**
+
+Your folder should look like this:
+```
+movie-data-pipeline/
+├── etl.py
+├── schema.sql
+├── queries.sql
+├── run_queries.py
+├── README.md
+├── .gitignore
+├── movies.csv          (optional)
+└── ratings.csv         (optional)
